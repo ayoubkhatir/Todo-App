@@ -1,6 +1,5 @@
 import type { HTTPResponseError } from "hono/types";
 
-
 export enum ErrorCode {
   BAD_REQUEST = "bad request",
   UNAUTHORIZED = "unauthorized",
@@ -15,31 +14,20 @@ export enum ErrorCode {
 }
 
 type HTTPStatus =
-  | 400 | 401 | 403 | 404 | 405
-  | 409 | 422 | 429
-  | 500 | 503
-
+  | 200
+  | 400
+  | 401
+  | 403
+  | 404
+  | 405
+  | 409
+  | 422
+  | 429
+  | 500
+  | 503;
 
 export type SuccessResponse<T> = {
-    success:true
-    message:string
-    data:T
-}
-export type ErrorResponse={
-    success:false
-    message:string
-    code:string
-    status:HTTPStatus
-}
-
-export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse
-
-
-
-
-export function Success<T>(message:string,data:T):SuccessResponse<T>{
-    return {success:true,message,data}
-}
-export function Fail(message:string,code:string,status:HTTPStatus):ErrorResponse{
-    return {success:false,message,code,status}
-}
+  success: true;
+  message: string;
+  data: T;
+};
