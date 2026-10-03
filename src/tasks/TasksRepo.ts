@@ -1,6 +1,11 @@
 import { asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { tasksTable } from "../db/schema.js";
-import type { CreateTask, Task, TasksQuery } from "../types/TaskTypes.js";
+import type {
+  CreateTask,
+  Task,
+  TasksQuery,
+  UpdateTask,
+} from "../types/TaskTypes.js";
 import { db } from "../db/index.js";
 
 const tasksss: Task[] = [
@@ -22,6 +27,7 @@ interface ITasksRepository {
   findAll: (query: TasksQuery) => Promise<Task[]>;
   findById: (id: string) => Promise<Task | undefined>;
   create: (createdTask: CreateTask) => Promise<Task>;
+  update: (updatedTask: UpdateTask, id: string) => Promise<Task | undefined>;
   delete: (id: string) => Promise<Task>;
 }
 
@@ -54,6 +60,15 @@ export class TasksRepository implements ITasksRepository {
 
   async create(createdTask: CreateTask) {
     const [task] = await db.insert(tasksTable).values(createdTask).returning();
+    return task;
+  }
+
+  async update(updatedTask: UpdateTask, id: string) {
+    const [task] = await db
+      .update(tasksTable)
+      .set(updatedTask)
+      .where(eq(tasksTable.id, id))
+      .returning();
     return task;
   }
 

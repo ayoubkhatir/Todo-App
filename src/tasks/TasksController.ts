@@ -1,16 +1,24 @@
 import { HTTPException } from "hono/http-exception";
 import { ErrorCode, type SuccessResponse } from "../types/ApiTypes.js";
-import type { CreateTask, Task, TasksQuery } from "../types/TaskTypes.js";
+import type {
+  CreateTask,
+  Task,
+  TasksQuery,
+  UpdateTask,
+} from "../types/TaskTypes.js";
 import { TasksRepository, tasksRepository } from "./TasksRepo.js";
 
 interface ITasksController {
   getTasks: (query: TasksQuery) => Promise<SuccessResponse<Task[] | undefined>>;
   getTask: (id: string) => Promise<SuccessResponse<Task | undefined>>;
   createTask: (createdTask: CreateTask) => Promise<SuccessResponse<null>>;
+  updateTask: (
+    updatedTask: UpdateTask,
+    id: string,
+  ) => Promise<SuccessResponse<Task>>;
   deleteTask: (id: string) => Promise<SuccessResponse<null>>;
 }
 
-//  implements ITasksController
 export class TasksController implements ITasksController {
   constructor(private readonly tasksRepository: TasksRepository) {}
   async getTasks(
@@ -59,6 +67,26 @@ export class TasksController implements ITasksController {
         success: true,
         message: "task created successfully",
         data: null,
+      };
+    } catch (error) {
+      if (error instanceof HTTPException) throw error;
+      throw new HTTPException(500, { message: "something went wrong" });
+    }
+  }
+
+  async updateTask(
+    updatedTask: UpdateTask,
+    id: string,
+  ): Promise<SuccessResponse<Task>> {
+    try {
+      const task = await this.tasksRepository.update(updatedTask, id);
+      if (!task) {
+        throw new HTTPException(404, { message: "task update failed" });
+      }
+      return {
+        success: true,
+        message: "task update successfully",
+        data: task,
       };
     } catch (error) {
       if (error instanceof HTTPException) throw error;
