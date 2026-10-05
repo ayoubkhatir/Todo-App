@@ -6,22 +6,7 @@ import type {
   TasksQuery,
   UpdateTask,
 } from "../types/TaskTypes.js";
-import { db } from "../db/index.js";
-
-const tasksss: Task[] = [
-  {
-    id: "1",
-    title: "Task 1",
-    done: false,
-    createdAt: new Date(),
-  },
-  {
-    id: "2",
-    title: "Task 2",
-    done: false,
-    createdAt: new Date(),
-  },
-];
+import { db, type Database } from "../db/index.js";
 
 interface ITasksRepository {
   findAll: (query: TasksQuery) => Promise<Task[]>;
@@ -32,6 +17,7 @@ interface ITasksRepository {
 }
 
 export class TasksRepository implements ITasksRepository {
+  constructor(private readonly db: Database) {}
   async findAll({ search, sortBy = "createdAt", sort = "desc" }: TasksQuery) {
     const searchCondition = search
       ? or(
@@ -43,7 +29,7 @@ export class TasksRepository implements ITasksRepository {
     const sortCondition =
       sort === "desc" ? desc(tasksTable[sortBy]) : asc(tasksTable[sortBy]);
 
-    return db
+    return this.db
       .select()
       .from(tasksTable)
       .where(searchCondition)
@@ -51,7 +37,7 @@ export class TasksRepository implements ITasksRepository {
   }
 
   async findById(id: string) {
-    const [task] = await db
+    const [task] = await this.db
       .select()
       .from(tasksTable)
       .where(eq(tasksTable.id, id));
@@ -59,12 +45,12 @@ export class TasksRepository implements ITasksRepository {
   }
 
   async create(createdTask: CreateTask) {
-    const [task] = await db.insert(tasksTable).values(createdTask).returning();
+    const [task] = await this.db.insert(tasksTable).values(createdTask).returning();
     return task;
   }
 
   async update(updatedTask: UpdateTask, id: string) {
-    const [task] = await db
+    const [task] = await this.db
       .update(tasksTable)
       .set(updatedTask)
       .where(eq(tasksTable.id, id))
@@ -73,7 +59,7 @@ export class TasksRepository implements ITasksRepository {
   }
 
   async delete(id: string) {
-    const [deletedTask] = await db
+    const [deletedTask] = await this.db
       .delete(tasksTable)
       .where(eq(tasksTable.id, id))
       .returning();
@@ -81,4 +67,4 @@ export class TasksRepository implements ITasksRepository {
   }
 }
 
-export const tasksRepository = new TasksRepository();
+export const tasksRepository = new TasksRepository(db); //can use mock data for testing

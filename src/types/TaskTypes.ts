@@ -2,9 +2,9 @@ import { z } from "zod";
 import { tasksTable } from "../db/schema.js";
 
 export type Task = {
-  createdAt: Date | null;
-  done: boolean;
   id: string;
+  createdAt: Date;
+  done: boolean;
   title: string;
 };
 export type CreateTask = {

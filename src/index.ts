@@ -5,6 +5,8 @@ import { TasksRouter } from "./tasks/TasksRouter.js";
 import { serve } from "@hono/node-server";
 import { HTTPException } from "hono/http-exception";
 import { AppLogger } from "./middleware/AppLogger.js";
+import { UsersRouter } from "./users/UsersRouter.js";
+import { AuthRouter } from "./auth/AuthRouter.js";
 
 const app = new Hono();
 
@@ -12,10 +14,9 @@ app.use("*", cors());
 
 app.use("*", AppLogger());
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+app.route("/auth", AuthRouter);
 
+app.route("/users", UsersRouter);
 app.route("/tasks", TasksRouter);
 
 app.onError((err, c) => {
@@ -32,7 +33,6 @@ app.onError((err, c) => {
       err.status,
     );
   }
-  // For any other unexpected errors, log and return a generic 500 response
   console.error(err);
   return c.text("Internal Server Error", 500);
 });
