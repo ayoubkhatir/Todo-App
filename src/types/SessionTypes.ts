@@ -13,3 +13,5 @@ export type AuthResponse = {
   user: PublicUser;
   session: Session;
 };
+
+export const expireAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);

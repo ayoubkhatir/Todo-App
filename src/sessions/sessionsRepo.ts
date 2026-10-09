@@ -29,10 +29,10 @@ export class SessionRepository {
     return session;
   }
 
-  async create(userId: string) {
+  async create(userId: string, expireAt: Date) {
     const [session] = await this.db
       .insert(sessionsTable)
-      .values({ userId })
+      .values({ userId, expireAt })
       .returning();
     return session;
   }

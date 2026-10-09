@@ -45,7 +45,10 @@ export class TasksRepository implements ITasksRepository {
   }
 
   async create(createdTask: CreateTask) {
-    const [task] = await this.db.insert(tasksTable).values(createdTask).returning();
+    const [task] = await this.db
+      .insert(tasksTable)
+      .values(createdTask)
+      .returning();
     return task;
   }
 

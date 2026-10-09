@@ -6,10 +6,12 @@ import { usersRepository } from "../users/UsersRepo.js";
 
 export const authMiddleware = createMiddleware(async (c, next) => {
   const sessionId = getCookie(c, "sessionId");
+  console.log("sessionId:", sessionId);
   if (!sessionId) {
     throw new HTTPException(401, { message: "Unauthorized" });
   }
   const session = await sessionsRepository.get(sessionId);
+  console.log("session:", session);
   if (!session) {
     throw new HTTPException(401, { message: "Unauthorized" });
   }
@@ -17,6 +19,7 @@ export const authMiddleware = createMiddleware(async (c, next) => {
     throw new HTTPException(401, { message: "Unauthorized" });
   }
   const user = await usersRepository.findById(session.userId);
+  console.log("user:", user);
   if (!user) {
     throw new HTTPException(401, { message: "Unauthorized" });
   }

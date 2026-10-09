@@ -7,7 +7,7 @@ import {
   sessionsRepository,
   type SessionRepository,
 } from "../sessions/sessionsRepo.js";
-import type { AuthResponse } from "../types/SessionTypes.js";
+import { expireAt, type AuthResponse } from "../types/SessionTypes.js";
 
 export interface IAuthController {
   register: (createdUser: CreateUser) => Promise<SuccessResponse<AuthResponse>>;
@@ -38,7 +38,7 @@ export class AuthController implements IAuthController {
       if (!user) {
         throw new HTTPException(400, { message: "user creation failed" });
       }
-      const session = await this.sessionsRepository.create(user.id);
+      const session = await this.sessionsRepository.create(user.id, expireAt);
       if (!session) {
         throw new HTTPException(400, { message: "session creation failed" });
       }
@@ -73,7 +73,10 @@ export class AuthController implements IAuthController {
         throw new HTTPException(500, { message: "Invalid email or password" });
       }
 
-      const session = await this.sessionsRepository.create(publicUser.id);
+      const session = await this.sessionsRepository.create(
+        publicUser.id,
+        expireAt,
+      );
       if (!session) {
         throw new HTTPException(400, { message: "session creation failed" });
       }

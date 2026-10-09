@@ -26,9 +26,6 @@ export class TasksController implements ITasksController {
   ): Promise<SuccessResponse<Task[] | undefined>> {
     try {
       const tasks = await this.tasksRepository.findAll(query);
-      if (tasks.length === 0) {
-        throw new HTTPException(404, { message: "task not found" });
-      }
       return {
         success: true,
         message: "tasks found successfully",

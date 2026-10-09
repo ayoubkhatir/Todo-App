@@ -21,7 +21,7 @@ export const AuthRouter = new Hono()
       sameSite: "Lax",
       expires: session.expireAt,
       path: "/",
-      // secure: true,
+      secure: process.env.NODE_ENV === "production",
     });
 
     return c.json({ publicUser });
@@ -38,7 +38,7 @@ export const AuthRouter = new Hono()
       sameSite: "Lax",
       expires: session.expireAt,
       path: "/",
-      // secure: true,
+      secure: process.env.NODE_ENV === "production",
     });
     return c.json({ publicUser });
   })
