@@ -1,6 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { loginSchema, registerSchema } from "../types/UserTypes.js";
+import {
+  loginSchema,
+  logoutSchema,
+  registerSchema,
+} from "../types/UserTypes.js";
 import { authController } from "./AuthController.js";
 import { setCookie } from "hono/cookie";
 
@@ -37,4 +41,10 @@ export const AuthRouter = new Hono()
       // secure: true,
     });
     return c.json({ publicUser });
+  })
+  .post("/logout", zValidator("json", logoutSchema), async (c) => {
+    const { userId } = c.req.valid("json");
+    const response = authController.logout(userId);
+    console.log({ response });
+    return c.json({ response, message: "deletion successful" });
   });

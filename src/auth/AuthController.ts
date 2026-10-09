@@ -12,7 +12,7 @@ import type { AuthResponse } from "../types/SessionTypes.js";
 export interface IAuthController {
   register: (createdUser: CreateUser) => Promise<SuccessResponse<AuthResponse>>;
   login: (loginUser: LoginUser) => Promise<SuccessResponse<AuthResponse>>;
-  //   logout: (id: string) => Promise<SuccessResponse<User | undefined>>;
+  logout: (id: string) => Promise<SuccessResponse<null>>;
 }
 
 export class AuthController implements IAuthController {
@@ -86,6 +86,19 @@ export class AuthController implements IAuthController {
       if (error instanceof HTTPException) throw error;
       throw new HTTPException(500, { message: "something went wrong" });
     }
+  }
+  async logout(id: string): Promise<SuccessResponse<null>> {
+    const user = await this.usersRepository.findById(id);
+    if (!user) {
+      throw new HTTPException(404, { message: "user doesn't exist" });
+    }
+    const session = await this.sessionsRepository.getByUserId(user.id);
+    if (!session) {
+      throw new HTTPException(404, { message: "session deletion failed" });
+    }
+
+    await this.sessionsRepository.delete(session.id);
+    return { success: true, message: "logout succeed", data: null };
   }
 }
 

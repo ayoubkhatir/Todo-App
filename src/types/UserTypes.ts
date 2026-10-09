@@ -33,3 +33,14 @@ export const loginSchema = z.object({
   email: z.email(),
   password: z.string(),
 });
+
+export const logoutSchema = z.object({
+  userId: z.string(),
+});
+
+
+// {
+//   "name":"mon3im",
+//   "email":"mon3im@gmail.com",
+//   "password":"mon3im1234"
+// }
