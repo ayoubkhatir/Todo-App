@@ -9,7 +9,7 @@ export type Session = {
 
 export type CreateSession = Omit<Session, "id" | "createdAt" | "expireAt">;
 
-export type RegisterResponse = {
+export type AuthResponse = {
   user: PublicUser;
   session: Session;
 };
