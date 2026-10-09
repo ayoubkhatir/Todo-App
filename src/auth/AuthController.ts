@@ -1,14 +1,12 @@
 import { HTTPException } from "hono/http-exception";
 import type { SuccessResponse } from "../types/ApiTypes.js";
-import type {
-  CreateUser,
-  LoginUser,
-  PublicUser,
-  User,
-} from "../types/UserTypes.js";
-import type { UsersRepository } from "../users/UsersRepo.js";
+import type { CreateUser, LoginUser } from "../types/UserTypes.js";
+import { usersRepository, type UsersRepository } from "../users/UsersRepo.js";
 import { passwordHasher } from "../utils/PasswordHasher.js";
-import type { SessionRepository } from "../sessions/sessionsRepo.js";
+import {
+  sessionsRepository,
+  type SessionRepository,
+} from "../sessions/sessionsRepo.js";
 import type { AuthResponse } from "../types/SessionTypes.js";
 
 export interface IAuthController {
@@ -90,3 +88,8 @@ export class AuthController implements IAuthController {
     }
   }
 }
+
+export const authController = new AuthController(
+  usersRepository,
+  sessionsRepository,
+);
