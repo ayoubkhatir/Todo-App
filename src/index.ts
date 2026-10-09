@@ -7,6 +7,7 @@ import { HTTPException } from "hono/http-exception";
 import { AppLogger } from "./middleware/AppLogger.js";
 import { UsersRouter } from "./users/UsersRouter.js";
 import { AuthRouter } from "./auth/AuthRouter.js";
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 const app = new Hono();
 
@@ -16,7 +17,11 @@ app.use("*", AppLogger());
 
 app.route("/auth", AuthRouter);
 
+// this is just a temporary setup.
+app.use("/users/*", authMiddleware);
 app.route("/users", UsersRouter);
+
+app.use("/tasks/*", authMiddleware);
 app.route("/tasks", TasksRouter);
 
 app.onError((err, c) => {
